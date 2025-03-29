@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import "./App.css";
 import { Card } from "./Card";
@@ -18,6 +18,16 @@ function App() {
   const [count, setCount] = useState(0);
   const [record, setRecord] = useState(0);
   const [clicked, setClicked] = useState(new Set());
+  const [cards, setCards] = useState(cardItems);
+
+  const shuffleCards = () => {
+    const newCards = [...cards];
+    for (let i = cards.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [newCards[i], newCards[j]] = [newCards[j], newCards[i]];
+    }
+    setCards(newCards);
+  };
 
   const handleClick = (id) => {
     if (clicked.has(id)) {
@@ -26,20 +36,28 @@ function App() {
       }
       setClicked(new Set());
       setCount(0);
+    } else {
+      setClicked((prevClicked) => {
+        const newClicked = new Set(prevClicked);
+        newClicked.add(id);
+        return newClicked;
+      });
+
+      setCount((prevCount) => prevCount + 1);
+
+      shuffleCards();
     }
-    setClicked((prevClicked) => {
-      const newClicked = new Set(prevClicked);
-      newClicked.add(id);
-      return newClicked;
-    });
-    setCount(count + 1);
   };
+
+  useEffect(() => {
+    shuffleCards();
+  }, []);
 
   return (
     <>
-      <Nav states={(count, record)} />
+      <Nav states={{ count, record }} />
       <Body>
-        {cardItems.map((item) => {
+        {cards.map((item) => {
           return (
             <Card
               key={item.id}
