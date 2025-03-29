@@ -1,6 +1,6 @@
-export function Card({ item }) {
+export function Card({ item, onClick }) {
   return (
-    <div className="card">
+    <div className="card" onClick={onClick}>
       <div className="card-content">
         <div className="card-header">
           <h2>{item.name}</h2>

@@ -2,6 +2,7 @@ import { useState } from "react";
 
 import "./App.css";
 import { Card } from "./Card";
+import { Body } from "./Body";
 
 const cardItems = [
   { id: 1, type: "Mammal", name: "Lion" },
@@ -16,15 +17,38 @@ const cardItems = [
 function App() {
   const [count, setCount] = useState(0);
   const [record, setRecord] = useState(0);
+  const [clicked, setClicked] = useState(new Set());
+
+  const handleClick = (id) => {
+    if (clicked.has(id)) {
+      if (count > record) {
+        setRecord(count);
+      }
+      setClicked(new Set());
+      setCount(0);
+    }
+    setClicked((prevClicked) => {
+      const newClicked = new Set(prevClicked);
+      newClicked.add(id);
+      return newClicked;
+    });
+    setCount(count + 1);
+  };
 
   return (
     <>
       <Nav states={(count, record)} />
-      <div className="body-area">
+      <Body>
         {cardItems.map((item) => {
-          return <Card key={item.id} item={item} />;
+          return (
+            <Card
+              key={item.id}
+              item={item}
+              onClick={() => handleClick(item.id)}
+            />
+          );
         })}
-      </div>
+      </Body>
     </>
   );
 }
